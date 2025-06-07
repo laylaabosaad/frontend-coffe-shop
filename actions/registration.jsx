@@ -2,6 +2,8 @@
 
 import axios from "axios";
 import { LoginFormSchema, RegisterFormSchema } from "../lib/rules";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 export async function loginUser(prevState, formData) {
   const rawData = {
@@ -22,10 +24,16 @@ export async function loginUser(prevState, formData) {
   try {
     const res = await axios.post("http://127.0.0.1:8000/api/login", rawData);
     console.log("res.data.token", res.data.token);
+    if (res.data.token) {
+      const cookieStore = cookies();
+      cookieStore.set("authToken", res.data.token, {
+        httpOnly: true,
+        path: "/",
+        maxAge: res.data.expires_in, // or use a number like 3600 (seconds)
+      });
+    }
     return {
       success: true,
-      token: res.data.token,
-      expiresIn: res.data.expires_in,
     };
   } catch (error) {
     let errors = {};
@@ -88,4 +96,10 @@ export async function registerUser(state, formData) {
       name: data.name,
     };
   }
+}
+
+export async function logout() {
+  const cookieStore = cookies();
+  cookieStore.delete("authToken");
+  redirect("/");
 }

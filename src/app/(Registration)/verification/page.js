@@ -1,11 +1,22 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useRef, useState, useEffect } from "react";
 
 function Verification() {
   const inputsRef = useRef([]);
   const [timeLeft, setTimeLeft] = useState(60);
   const [resendEnabled, setResendEnabled] = useState(false);
+  const router = useRouter();
+  useEffect(() => {
+    const userEmail = sessionStorage.getItem("userEmail");
+    console.log("userEmail", userEmail);
+    if (!userEmail) {
+      // Optional: redirect back to register page or show error
+      console.warn("No email found in sessionStorage. Redirecting...");
+      router.push("/register");
+    }
+  }, []);
 
   // Timer countdown logic
   useEffect(() => {
