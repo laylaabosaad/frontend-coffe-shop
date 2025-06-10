@@ -23,7 +23,7 @@ export async function loginUser(prevState, formData) {
   }
   try {
     const res = await axios.post("http://127.0.0.1:8000/api/login", rawData);
-    console.log("res.data.token", res.data.token);
+
     if (res.data.token) {
       const cookieStore = cookies();
       cookieStore.set("authToken", res.data.token, {
@@ -60,11 +60,9 @@ export async function registerUser(state, formData) {
     password: formData.get("password"),
     password_confirmation: formData.get("password_confirmation"),
   };
-  console.log("dataaa", data);
   const parsed = RegisterFormSchema.safeParse(data);
   if (!parsed.success) {
     const errors = parsed.error.flatten().fieldErrors;
-    console.log("errors", errors);
     return {
       success: false,
       errors,
@@ -74,11 +72,11 @@ export async function registerUser(state, formData) {
   }
 
   try {
-    await axios.post("http://127.0.0.1:8000/api/register", data);
+    const res = await axios.post("http://127.0.0.1:8000/api/register", data);
 
     return {
       success: true,
-      email: data.email,
+      token: res.data.token,
     };
   } catch (error) {
     let errors = {};
@@ -99,7 +97,19 @@ export async function registerUser(state, formData) {
 }
 
 export async function logout() {
-  const cookieStore = cookies();
+  const cookieStore =await cookies();
   cookieStore.delete("authToken");
+  redirect("/");
+}
+
+export async function automaticLogin(response) {
+  const cookieStore = await cookies();
+  console.log("responseeeeeeee for the settong cookie", response)
+    cookieStore.set("authToken", response.token, {
+    httpOnly: true,
+    path: "/",
+    maxAge: response.expires_in,
+  });
+
   redirect("/");
 }

@@ -1,0 +1,5 @@
+FOR VERIFICATION
+
+
+I am sending the 'verification_code_sent_at' and 'verification_expires_at' in the token and saving it in the session
+and decoding it within the useEffect while calculating the time left to expire in a timeout

@@ -12,7 +12,7 @@ function register() {
   const router = useRouter();
   useEffect(() => {
     if (state?.success) {
-      sessionStorage.setItem("userEmail", state?.email);
+      sessionStorage.setItem("userInfo", state?.token);
       router.push("/verification");
     }
   }, [state?.success, router]);

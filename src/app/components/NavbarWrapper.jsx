@@ -4,7 +4,7 @@ import { logout } from "../../../actions/registration";
 
 async function NavbarWrapper() {
   const user = await getUserAuth();
-  console.log("user", user);
+
   return (
     <div className="bg-[#161616b8] text-white flex justify-between h-[50px] items-center px-[5%]">
       <div className="w-[fit-content]">
