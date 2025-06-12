@@ -25,7 +25,7 @@ export async function loginUser(prevState, formData) {
     const res = await axios.post("http://127.0.0.1:8000/api/login", rawData);
 
     if (res.data.token) {
-      const cookieStore = cookies();
+      const cookieStore = await cookies();
       cookieStore.set("authToken", res.data.token, {
         httpOnly: true,
         path: "/",
@@ -97,19 +97,38 @@ export async function registerUser(state, formData) {
 }
 
 export async function logout() {
-  const cookieStore =await cookies();
+  const cookieStore = await cookies();
   cookieStore.delete("authToken");
   redirect("/");
 }
 
 export async function automaticLogin(response) {
   const cookieStore = await cookies();
-  console.log("responseeeeeeee for the settong cookie", response)
-    cookieStore.set("authToken", response.token, {
+  console.log("responseeeeeeee for the settong cookie", response);
+  cookieStore.set("authToken", response.token, {
     httpOnly: true,
     path: "/",
     maxAge: response.expires_in,
   });
 
   redirect("/");
+}
+
+export async function resendVerificationCode(token) {
+  try {
+    const res = await axios.put(
+      "http://127.0.0.1:8000/api/resend-code",
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return res.data
+   
+  } catch (error) {
+    console.error("Error resending verification code:", error);
+    throw error;
+  }
 }

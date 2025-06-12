@@ -14,7 +14,7 @@ async function NavbarWrapper() {
         <Link href="/login">Add Post</Link>
         {user ? (
           <form action={logout}>
-            <button className="nav-link">Logout</button>
+            <button className="nav-link cursor-pointer">Logout</button>
           </form>
         ) : (
           <>
